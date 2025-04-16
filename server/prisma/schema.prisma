@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Playlist {
+  id      Int     @id @default(autoincrement())
+  name    String  @unique
+  clients Client[] @relation("PlaylistToClient")
+  songs   Song[]
+}
+
+model Client {
+  id         Int       @id @default(autoincrement())
+  fullName   String
+  socketId   String
+  playlists  Playlist[] @relation("PlaylistToClient")
+}
+
+model Song {
+  id          Int      @id @default(autoincrement())
+  title       String
+  playlistId  Int      // Scalar field for the foreign key
+  playlist    Playlist @relation(fields: [playlistId], references: [id]) // Relation field
+}
